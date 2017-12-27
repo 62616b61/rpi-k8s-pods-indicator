@@ -1,0 +1,37 @@
+kind: DaemonSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: rpi-k8s-pods-indicator
+  namespace: kube-system
+spec:
+  template:
+    metadata:
+      labels:
+        name: rpi-k8s-pods-indicator
+    spec:
+      serviceAccountName: rpi-k8s-pods-indicator-sa
+      nodeSelector:
+        kubernetes.io/hostname: lsp
+        #deviceType: blinkt
+      containers:
+      - name: rpi-k8s-pods-indicator
+        securityContext:
+          privileged: true
+        image: kurai/rpi-k8s-pods-indicator
+        volumeMounts:
+        - mountPath: /sys
+          name: sys
+        - mountPath: /dev
+          name: dev
+        - mountPath: /lib/modules
+          name: modules
+      volumes:
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: dev
+        hostPath:
+          path: /dev
+      - name: modules
+        hostPath:
+          path: /lib/modules
