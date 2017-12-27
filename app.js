@@ -1,6 +1,13 @@
 const Raspi = require('raspi-io')
 const five = require('johnny-five')
 
+const Api = require('kubernetes-client')
+const ext = new Api.Extensions(Api.config.getInCluster())
+
+ext.namespaces.deployments('hypriot').get((err, res) => {
+  console.log(err, res)
+});
+
 const board = new five.Board({
   repl: false,
   io: new Raspi()
@@ -25,6 +32,7 @@ board.on('ready', () => {
   // Shows just the number for a half second, then
   // the number + a decimal point for a half second.
   setInterval(function() {
+    console.log('displaying' + number + decimal)
     register.display(number + (decimal && "."));
 
     if (decimal) {
