@@ -2,11 +2,11 @@ const Raspi = require('raspi-io')
 const five = require('johnny-five')
 
 const Api = require('kubernetes-client')
-const ext = new Api.Extensions(Api.config.getInCluster())
-
-ext.namespaces.deployments('hypriot').get((err, res) => {
-  console.log(err, res)
-});
+const core = new Api.Core(Object.assign(
+  {},
+  Api.config.getInCluster(),
+  { namespace: 'default' }
+))
 
 const board = new five.Board({
   repl: false,
@@ -25,20 +25,10 @@ board.on('ready', () => {
   })
   register.reset()
 
-  var number = 1;
-  var decimal = 0;
-
   setInterval(function() {
-    register.display(number + (decimal && "."));
-
-    if (decimal) {
-      number++;
-    }
-
-    if (number > 9) {
-      number = 0;
-    }
-
-    decimal ^= 1;
-  }, 500);
+    core.namespaces.pods.get((err, res) => {
+      const pods = res.items.length
+      register.display(pods <= 9 ? pods : 9)
+    })
+  }, 5000)
 })
