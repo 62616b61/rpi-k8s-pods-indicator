@@ -28,11 +28,7 @@ board.on('ready', () => {
   var number = 1;
   var decimal = 0;
 
-  // Display numbers 0-9, one at a time in a loop.
-  // Shows just the number for a half second, then
-  // the number + a decimal point for a half second.
   setInterval(function() {
-    console.log('displaying' + number + decimal)
     register.display(number + (decimal && "."));
 
     if (decimal) {
